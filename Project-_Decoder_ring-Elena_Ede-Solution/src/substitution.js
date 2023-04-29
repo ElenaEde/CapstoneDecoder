@@ -3,46 +3,43 @@
 // Only add code (e.g., helper methods, variables, etc.) within the scope
 // of the anonymous function on line 6
 
-const substitutionModule = (function () {
-  let realAlphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+const substitutionModule = (() => {
+  const realAlphabet = "abcdefghijklmnopqrstuvwxyz".split("");
 
   function substitution(input, alphabet, encode = true) {
-    if (!alphabet) return false;
-    if (alphabet.length != 26) return false;
-    for (let i = 0; i < input.length; i++) {
-      if (alphabet.indexOf(input[i]) != alphabet.lastIndexOf(input[i]))
-        return false;
+    if (!alphabet || alphabet.length !== 26) {
+      return false;
     }
-    if (encode) return subEncode(input, alphabet);
-    return subDecode(input, alphabet);
+
+    for (let i = 0; i < input.length; i++) {
+      if (alphabet.indexOf(input[i]) !== alphabet.lastIndexOf(input[i])) {
+        return false;
+      }
+    }
+
+    return encode ? subEncode(input, alphabet) : subDecode(input, alphabet);
   }
 
   function subEncode(input, alphabet) {
-    let codeMessage = [];
     input = input.toLowerCase();
-    for (let i = 0; i < input.length; i++) {
-      let codeIndex = realAlphabet.indexOf(input[i]);
-      let codeLetter = alphabet[codeIndex];
-      if (codeIndex < 0) {
-        codeMessage.push(input[i]);
-      }
-      codeMessage.push(codeLetter);
-      console.log(codeLetter);
-    }
-    return codeMessage.join("");
+
+    return input
+      .split("")
+      .map(char => {
+        const codeIndex = realAlphabet.indexOf(char);
+        return codeIndex >= 0 ? alphabet[codeIndex] : char;
+      })
+      .join("");
   }
 
   function subDecode(input, alphabet) {
-    let decodeMessage = [];
-    for (let i = 0; i < input.length; i++) {
-      let decodeIndex = alphabet.indexOf(input[i]);
-      let decodeLetter = realAlphabet[decodeIndex];
-      if (decodeIndex < 0) {
-        decodeMessage.push(input[i]);
-      }
-      decodeMessage.push(decodeLetter);
-    }
-    return decodeMessage.join("");
+    return input
+      .split("")
+      .map(char => {
+        const decodeIndex = alphabet.indexOf(char);
+        return decodeIndex >= 0 ? realAlphabet[decodeIndex] : char;
+      })
+      .join("");
   }
 
   return {
